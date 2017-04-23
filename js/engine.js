@@ -156,6 +156,13 @@ var Engine = (function(global) {
         });
 
         player.render();
+
+        placarVida.forEach(function(enemy) {
+            enemy.render();
+        });
+
+        placarLevel.render();
+
     }
 
     /* This function does nothing but it could have been a good place to
@@ -163,7 +170,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -176,7 +183,15 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-cat-girl.png',
-        'images/Rock.png'
+        'images/Rock.png',
+        'images/tiny-Heart.png',
+        'images/level-1.png',
+        'images/level-2.png',
+        'images/level-3.png',
+        'images/level-4.png',
+        'images/level-5.png',
+        'images/char-death.png',
+        'images/bubbles.png'
     ]);
     Resources.onReady(init);
 

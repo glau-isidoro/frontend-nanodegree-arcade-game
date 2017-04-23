@@ -1,124 +1,196 @@
 var playerInitX = 202;
 var playerInitY = 405;
 var enemyInitY = [140, 225, 310];
-var rockInitX = [0, 100, 200, 300, 400];
+var rockInitX = [0, 101, 202, 303, 404];
+var tinyHeartInitX = [1, 20, 40, 60, 80];
+var allRocks = [];
+var allEnemies = [];
+var player;
+var placarVida = [];
+var placarLevel;
 
-// Enemies our player must avoid
+function resetGame() {
+  allRocks = [];
+  for( var i = 0; i < 5; i++ ){
+      allRocks[i] = new Rocks(i);
+  }
+
+  allEnemies = [];
+  for( var i = 0; i < 2; i++ ){
+      allEnemies[i] = new Enemy();
+  }
+
+  player = new Player();
+
+  placarVida = [];
+  for( var i = 0; i < 5; i++ ){
+      placarVida[i] = new PlacarVida(i);
+  }
+
+  placarLevel = new PlacarLevel();
+
+}
+
+// Enemies
 var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
     this.x = -70;
     this.y = enemyInitY[Math.floor((Math.random() * 3))];
+    this.cabecinha = this.x + 101;
     this.speed = Math.floor((Math.random() * 100) + 10);
+    this.pause = false;
 
     this.sprite = 'images/enemy-bug.png';
 };
-
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-  // You should multiply any movement by the dt parameter
-  // which will ensure the game runs at the same speed for
-  // all computers.
-  if( this.x < 505) {
-      this.x += this.speed * dt * 3;
-  } else {
-      this.x = -70;
-      this.y = enemyInitY[Math.floor((Math.random() * 3))];
-      this.speed = Math.floor((Math.random() * 100) + 10);
+
+  if(!this.pause) {
+      if( this.x < 505) {
+          this.x += this.speed * dt * 3;
+          this.cabecinha = this.x + 101;
+      } else {
+          this.x = -70;
+          this.y = enemyInitY[Math.floor((Math.random() * 3))];
+          this.cabecinha = this.x + 101;
+          this.speed = Math.floor((Math.random() * 70) + 10);
+      }
+      if(this.y == player.y - 10) {
+          if(
+              ( this.cabecinha >= player.orelhaE && this.cabecinha <= player.orelhaD ) ||
+              ( this.x >= player.orelhaE && this.x <= player.orelhaD )
+            ) {
+                allEnemies.forEach(function(enemy) {
+                    enemy.pause = true;
+                    enemy.x = -110;
+                    setTimeout(function(){ enemy.pause = false; }, 500);
+                });
+                player.life--;
+                player.sprite = 'images/char-death.png';
+                placarVida.pop();
+                setTimeout(function(){ player.reset(); }, 500);
+          }
+      }
   }
 };
-
-// Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-// Our player
+// Player
 var Player = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
 
     this.x = playerInitX;
     this.y = playerInitY;
 
+    this.orelhaE = this.x + 18;
+    this.orelhaD = this.x + 84;
+
+    this.level = 1;
+    this.life = 5;
+
     this.sprite = 'images/char-cat-girl.png';
 };
-
-// Update the player's position, required method for game
-// Parameter: dt, a time delta between ticks
 Player.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-};
 
-// Draw the player on the screen, required method for game
+};
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+Player.prototype.reset = function() {
+    this.sprite = 'images/char-cat-girl.png';
+    this.x = playerInitX;
+    this.y = playerInitY;
+    if(this.level == 6 || this.life == 0) {
+        resetGame();
+    } else {
+      placarLevel.sprite = 'images/level-' + this.level + '.png';
+    }
 
+};
 Player.prototype.handleInput = function(keyCode) {
 
-    if( this.y < 90 ) {
-      this.x = playerInitX;
-      this.y = playerInitY;
-    } else if( keyCode == 'up' && this.y > 90 ) {
-        this.y = this.y - 85;
-    } else if( keyCode == 'down' && this.y < 400 ) {
-      this.y = this.y + 85;
-    } else if( keyCode == 'right' && this.x < 400 ) {
-      this.x = this.x + 101;
-    } else if( keyCode == 'left' && this.x > 100 ) {
-      this.x = this.x - 101;
+    if( this.sprite == 'images/char-cat-girl.png' ) {
+        if( keyCode == 'up' && this.y > 90 ) {
+            this.y = this.y - 85;
+
+            if( this.y < 90 ) {
+
+              var column = this.x / 101;
+              if( allRocks[column] ) {
+                  this.level++;
+                  allEnemies.push( new Enemy() );
+                  setTimeout(function(){ delete allRocks[column]; }, 500);
+              } else {
+                  this.life--;
+                  this.sprite = 'images/bubbles.png';
+                  placarVida.pop();
+              }
+
+              setTimeout(function(){ player.reset(); }, 500);
+
+            }
+
+        } else if( keyCode == 'down' && this.y < 400 ) {
+            this.y = this.y + 85;
+        } else if( keyCode == 'right' && this.x < 400 ) {
+            this.x = this.x + 101;
+            this.orelhaE = this.x + 18;
+            this.orelhaD = this.x + 84;
+        } else if( keyCode == 'left' && this.x > 100 ) {
+            this.x = this.x - 101;
+            this.orelhaE = this.x + 18;
+            this.orelhaD = this.x + 84;
+        }
     }
 
 };
 
-
+// Pedras
 var Rocks = function( pos ) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
     this.x = rockInitX[pos];
     this.y = 55;
 
     this.sprite = 'images/Rock.png';
 };
-
-// Update the player's position, required method for game
-// Parameter: dt, a time delta between ticks
 Rocks.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-};
 
-// Draw the player on the screen, required method for game
+};
 Rocks.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now instantiate your objects.
-var allRocks = [];
-for (var i = 0; i < 5; i++){
-    allRocks[i] = new Rocks(i);
+// Placares
+var PlacarVida = function(index) {
+
+    this.x = tinyHeartInitX[index];
+    this.y = 50;
+
+    this.sprite = 'images/tiny-Heart.png';
 }
+PlacarVida.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+PlacarVida.prototype.update = function(dt) {
 
-var allEnemies = [];
+};
 
-for (var i = 0; i < 3; i++){
-    allEnemies[i] = new Enemy();
+var PlacarLevel = function(index) {
+
+    this.x = 424;
+    this.y = 55;
+
+    this.sprite = 'images/level-1.png';
 }
+PlacarLevel.prototype.update = function(dt) {
 
-var player = new Player();
+};
+PlacarLevel.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
 
+
+// Instantiate objects.
+resetGame();
 
 
 // This listens for key presses and sends the keys to your
