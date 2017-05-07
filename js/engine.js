@@ -163,6 +163,8 @@ var Engine = (function(global) {
 
         placarLevel.render();
 
+        placarWin.render();
+
     }
 
     /* This function does nothing but it could have been a good place to
@@ -191,7 +193,8 @@ var Engine = (function(global) {
         'images/level-4.png',
         'images/level-5.png',
         'images/char-death.png',
-        'images/bubbles.png'
+        'images/bubbles.png',
+        'images/you-win.png'
     ]);
     Resources.onReady(init);
 
