@@ -1,6 +1,13 @@
-frontend-nanodegree-arcade-game
+#Frontend-Nanodegree-Arcade-Game
 ===============================
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+Baseado no clássico [Frogger Game](https://youtu.be/WNrz9_Fe-Us), onde o jogador precisa atravessar a rua sem ser atropelado.
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+**Iniciando o jogo:** Abra o _index.html_ no navegador de sua preferência.
+
+**Como jogar:**
+* _Controles:_ setas do teclado.
+* _Dinâmica do Jogo:_ o jogador precisa atravessar a rua sem ser atropelado pelas joaninhas e chegar nas pedras que estão no rio. No começo há muitas pedras e poucas joaninhas passando, mas conforme os levels passam, a quantidade de pedras diminuem e de joaninhas aumentam. O jogador volta pro início toda vez que morrer (atropelado ou afogado) e toda vez que alcança uma pedra começa um level mais difícil.
+* _Vidas:_ o jogador começa com 5 vidas e perde uma quando é atropelado ou quando cai dentro da água.
+
+___Você pode jogar quantas vezes quiser, pois cada vez que perder todas as vidas ou passar dos 5 levels, o jogo reinicia do zero. Diversão sem limites! \o/___
