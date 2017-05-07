@@ -13,26 +13,26 @@ var winInterval;
 
 //(re)iniciando o jogo
 function resetGame() {
-  allRocks = [];
-  for( var i = 0; i < 5; i++ ){
-      allRocks[i] = new Rocks(i);
-  }
+    allRocks = [];
+    for( var i = 0; i < 5; i++ ){
+        allRocks[i] = new Rocks(i);
+    }
 
-  allEnemies = [];
-  for( var i = 0; i < 2; i++ ){
-      allEnemies[i] = new Enemy(i);
-  }
+    allEnemies = [];
+    for( var i = 0; i < 2; i++ ){
+        allEnemies[i] = new Enemy(i);
+    }
 
-  player = new Player();
+    player = new Player();
 
-  placarVida = [];
-  for( var i = 0; i < 5; i++ ){
-      placarVida[i] = new PlacarVida(i);
-  }
+    placarVida = [];
+    for( var i = 0; i < 5; i++ ){
+        placarVida[i] = new PlacarVida(i);
+    }
 
-  placarLevel = new PlacarLevel();
+    placarLevel = new PlacarLevel();
 
-  placarWin = new PlacarWin();
+    placarWin = new PlacarWin();
 }
 
 //calculando em qual coluna as personagens estão
@@ -42,7 +42,7 @@ function calcColumn(x) {
 }
 
 // Enemies
-var Enemy = function( i ) {
+var Enemy = function(i) {
     this.numb = i;
     this.x = -70;
     this.y = enemyInitY[Math.floor((Math.random() * 3))];
@@ -53,16 +53,16 @@ var Enemy = function( i ) {
 
 //joaninhas andando e checando colisão
 Enemy.prototype.update = function(dt) {
-  if(!this.pause) {
-      if( this.x < 505) {
-          this.x += this.speed * dt * 3;
-      } else {
-          this.x = -110;
-          this.y = enemyInitY[Math.floor((Math.random() * 3))];
-          this.speed = Math.floor((Math.random() * 70) + 10);
-      }
-      this.checkCollisions();
-  }
+    if(!this.pause) {
+        if( this.x < 505) {
+            this.x += this.speed * dt * 3;
+        } else {
+            this.x = -110;
+            this.y = enemyInitY[Math.floor((Math.random() * 3))];
+            this.speed = Math.floor((Math.random() * 70) + 10);
+        }
+        this.checkCollisions();
+    }
 };
 
 Enemy.prototype.render = function() {
@@ -113,7 +113,7 @@ Player.prototype.reset = function() {
     if(this.life == 0) {
         resetGame();
     } else {
-      placarLevel.sprite = 'images/level-' + this.level + '.png';
+        placarLevel.sprite = 'images/level-' + this.level + '.png';
     }
 };
 
@@ -122,39 +122,39 @@ Player.prototype.handleInput = function(keyCode) {
     if( this.sprite == 'images/char-cat-girl.png' ) {
         //verifica se jogador não venceu para poder mover personagem
         if(this.level != 6) {
-          if( keyCode == 'up' && this.y > 90 ) {
-              this.y = this.y - 85;
-              //verifica se personagem pulou em uma pedra
-              if( this.y < 90 ) {
-                var iRock = this.column;
-                if( allRocks[iRock] ) {
-                    this.level++;
-                    //verifica se personagem venceu o jogo
-                    if(this.level == 6) {
-                        winInterval = setInterval(this.win, 200);
+            if( keyCode == 'up' && this.y > 90 ) {
+                this.y = this.y - 85;
+                //verifica se personagem pulou em uma pedra
+                if( this.y < 90 ) {
+                    var iRock = this.column;
+                    if( allRocks[iRock] ) {
+                        this.level++;
+                        //verifica se personagem venceu o jogo
+                        if(this.level == 6) {
+                            winInterval = setInterval(this.win, 200);
+                        } else {
+                            allEnemies.push( new Enemy(allEnemies.lengt));
+                            setTimeout(function(){ delete allRocks[iRock]; }, 500);
+                        }
                     } else {
-                        allEnemies.push( new Enemy(allEnemies.lengt));
-                        setTimeout(function(){ delete allRocks[iRock]; }, 500);
+                        this.life--;
+                        this.sprite = 'images/bubbles.png';
+                        placarVida.pop();
                     }
-                } else {
-                    this.life--;
-                    this.sprite = 'images/bubbles.png';
-                    placarVida.pop();
+                    //se jogador passou de level mas não venceu ainda
+                    if(this.level != 6) {
+                        setTimeout(function(){ player.reset(); }, 500);
+                    }
                 }
-                //se jogador passou de level mas não venceu ainda
-                if(this.level != 6) {
-                    setTimeout(function(){ player.reset(); }, 500);
-                }
-              }
-          } else if( keyCode == 'down' && this.y < 400 ) {
-              this.y = this.y + 85;
-          } else if( keyCode == 'right' && this.x < 400 ) {
-              this.x = this.x + 101;
-              this.column = calcColumn(this.x);
-          } else if( keyCode == 'left' && this.x > 100 ) {
-              this.x = this.x - 101;
-              this.column = calcColumn(this.x);
-          }
+            } else if( keyCode == 'down' && this.y < 400 ) {
+                this.y = this.y + 85;
+            } else if( keyCode == 'right' && this.x < 400 ) {
+                this.x = this.x + 101;
+                this.column = calcColumn(this.x);
+            } else if( keyCode == 'left' && this.x > 100 ) {
+                this.x = this.x - 101;
+                this.column = calcColumn(this.x);
+            }
         } else {
             clearInterval(winInterval);
             resetGame();
